@@ -39,7 +39,7 @@ function getDaysInMonth(month, year) {
   return days;
 }
 
-export default function SessionsChart() {
+function CustomizedChart({ title }) {
   const theme = useTheme();
   const data = getDaysInMonth(4, 2024);
 
@@ -53,7 +53,7 @@ export default function SessionsChart() {
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
-          Total Supply
+          {title}
         </Typography>
         <Stack sx={{ justifyContent: 'space-between' }}>
           <Stack
@@ -140,3 +140,9 @@ export default function SessionsChart() {
     </Card>
   );
 }
+
+CustomizedChart.propTypes = {
+  title: PropTypes.string.isRequired,
+};
+
+export default CustomizedChart;
