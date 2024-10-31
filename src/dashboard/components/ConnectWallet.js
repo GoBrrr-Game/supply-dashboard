@@ -1,58 +1,60 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
-import WalletIcon from '@mui/icons-material/Wallet';
+import React, { useState } from 'react'
+import { Button, Menu, MenuItem, Typography, Box } from '@mui/material'
+import { AccountBalanceWallet, ExpandMore } from '@mui/icons-material'
 
-function ButtonField(props) {
-  const {
-    setOpen,
-    label,
-    id,
-    disabled,
-    InputProps: { ref } = {},
-    inputProps: { 'aria-label': ariaLabel } = {},
-  } = props;
-
-  return (
-    <Button
-      variant="outlined"
-      id={id}
-      disabled={disabled}
-      ref={ref}
-      aria-label={ariaLabel}
-      size="small"
-      onClick={() => setOpen?.((prev) => !prev)}
-      startIcon={<WalletIcon fontSize="small" />}
-      sx={{ minWidth: 'fit-content' }}
-    >
-      {label ? `${label}` : 'Pick a date'}
-    </Button>
-  );
+// Placeholder function for wallet connection
+const connectWallet = async (walletType) => {
+  // In a real application, this would interact with the chosen wallet
+  console.log(`Connecting to ${walletType}...`)
+  return '0x1234...5678' // Simulated wallet address
 }
 
-ButtonField.propTypes = {
-  /**
-   * If `true`, the component is disabled.
-   * @default false
-   */
-  disabled: PropTypes.bool,
-  id: PropTypes.string,
-  inputProps: PropTypes.shape({
-    'aria-label': PropTypes.string,
-  }),
-  InputProps: PropTypes.shape({
-    endAdornment: PropTypes.node,
-    startAdornment: PropTypes.node,
-  }),
-  label: PropTypes.node,
-  setOpen: PropTypes.func,
-};
+export default function WalletConnect() {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(null);
 
-export default function ConnectWallet() {
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleConnectWallet = async (walletType) => {
+    const address = await connectWallet(walletType)
+    setWalletAddress(address)
+    handleClose()
+  }
+
+  const handleDisconnect = () => {
+    setWalletAddress(null)
+  }
 
   return (
-      <ButtonField
-        label='Connect Wallet'
-        />
-  );
+    <Box>
+      <Button
+        variant="contained"
+        onClick={walletAddress ? handleDisconnect : handleClick}
+        endIcon={walletAddress ? null : <ExpandMore />}
+        startIcon={<AccountBalanceWallet />}
+      >
+        {walletAddress ? 'Disconnect' : 'Connect Wallet'}
+      </Button>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => handleConnectWallet('MetaMask')}>MetaMask</MenuItem>
+        <MenuItem onClick={() => handleConnectWallet('WalletConnect')}>WalletConnect</MenuItem>
+        <MenuItem onClick={() => handleConnectWallet('Coinbase Wallet')}>Coinbase Wallet</MenuItem>
+      </Menu>
+      {walletAddress && (
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          Connected: {walletAddress}
+        </Typography>
+      )}
+    </Box>
+  )
 }
