@@ -39,7 +39,7 @@ function getDaysInMonth(month, year) {
   return days;
 }
 
-function CustomizedChart({ title }) {
+function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
   const theme = useTheme();
   const data = getDaysInMonth(4, 2024);
 
@@ -49,6 +49,7 @@ function CustomizedChart({ title }) {
     theme.palette.primary.dark,
   ];
 
+  console.log(chartData)
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
@@ -65,9 +66,9 @@ function CustomizedChart({ title }) {
             }}
           >
             <Typography variant="h4" component="p">
-              13,277
+              {value}
             </Typography>
-            <Chip size="small" color="success" label="+35%" />
+            <Chip size="small" color={subValueType} label={subValue} />
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             Sessions per day for the last 30 days
@@ -82,48 +83,41 @@ function CustomizedChart({ title }) {
               tickInterval: (index, i) => (i + 1) % 5 === 0,
             },
           ]}
+          yAxis={[
+            {
+              max: 100000000000,
+              min: 90000000000,
+              valueFormatter: (value) => {
+                console.log(value, 'in tick formatter')
+                if (value >= 1000000000) {
+                  return `${(value / 1000000000).toFixed(0)}B`; // Convert to thousands
+                }
+                return value.toString();
+              }
+            },
+          ]}
           series={[
             {
-              id: 'direct',
-              label: 'Direct',
-              showMark: false,
-              curve: 'linear',
-              stack: 'total',
-              area: true,
-              stackOrder: 'ascending',
-              data: [
-                300, 900, 600, 1200, 1500, 1800, 2400, 2100, 2700, 3000, 1800, 3300,
-                3600, 3900, 4200, 4500, 3900, 4800, 5100, 5400, 4800, 5700, 6000,
-                6300, 6600, 6900, 7200, 7500, 7800, 8100,
-              ],
-            },
-            {
               id: 'referral',
-              label: 'Referral',
+              label: 'Circulating Supply',
               showMark: false,
               curve: 'linear',
-              stack: 'total',
               area: true,
-              stackOrder: 'descending',
-              data: [
-                10000, 9900, 9700, 9400, 9100, 8700, 8300, 8000, 7600, 6900, 6300, 6200,
-                5500, 5200, 5100, 5000, 4900, 4700, 4600, 4300, 4100, 3900, 3200,
-                3000, 2800, 2600, 2200, 1700, 1400, 1000,
-              ],
+              data: chartData ? chartData : [],
             },
           ]}
           height={250}
-          margin={{ left: 50, right: 20, top: 20, bottom: 20 }}
+          margin={{ left: 40, right: 20, top: 20, bottom: 20 }}
           grid={{ horizontal: true }}
           sx={{
             '& .MuiAreaElement-series-organic': {
-              fill: "url('#organic')",
+              fill: "url('#referral')",
             },
             '& .MuiAreaElement-series-referral': {
               fill: "url('#referral')",
             },
             '& .MuiAreaElement-series-direct': {
-              fill: "url('#direct')",
+              fill: "url('#referral')",
             },
           }}
           slotProps={{
@@ -134,7 +128,7 @@ function CustomizedChart({ title }) {
         >
           <AreaGradient color={theme.palette.primary.dark} id="organic" />
           <AreaGradient color={theme.palette.primary.main} id="referral" />
-          <AreaGradient color={theme.palette.primary.light} id="direct" />
+          <AreaGradient color={theme.palette.primary.light} id="referral" />
         </LineChart>
       </CardContent>
     </Card>

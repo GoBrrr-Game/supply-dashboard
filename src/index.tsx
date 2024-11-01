@@ -5,12 +5,17 @@ import App from './App';
 import Dashboard from './dashboard/Dashboard';
 import reportWebVitals from './reportWebVitals';
 
+import client from './providers/apolloClient';
+import { ApolloProvider } from '@apollo/client';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Dashboard />
+    <ApolloProvider client={client}>
+      <Dashboard />
+    </ApolloProvider>
   </React.StrictMode>
 );
 

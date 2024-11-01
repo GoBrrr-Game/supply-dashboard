@@ -6,7 +6,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 
-function TypographyCard({ title, value }) {
+function InitialSupplyCard({ title, value }) {
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
       <CardContent>
@@ -33,9 +33,9 @@ function TypographyCard({ title, value }) {
   );
 }
 
-TypographyCard.propTypes = {
+InitialSupplyCard.propTypes = {
   title: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
 };
 
-export default TypographyCard;
+export default InitialSupplyCard;
