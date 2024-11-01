@@ -24,24 +24,28 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function getDaysInMonth(month, year) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString('en-US', {
-    month: 'short',
-  });
-  const daysInMonth = date.getDate();
+function getLast30Days() {
+  const today = new Date();
   const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
+
+  for (let i = 0; i < 30; i++) {
+    const pastDate = new Date(today);
+    pastDate.setDate(today.getDate() - i);
+
+    const dayString = pastDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    days.push(dayString);
   }
-  return days;
+
+  return days.reverse(); // Reverse to show oldest date first
 }
 
 function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
   const theme = useTheme();
-  const data = getDaysInMonth(4, 2024);
+  const data = getLast30Days();
 
   const colorPalette = [
     theme.palette.primary.light,
@@ -49,7 +53,6 @@ function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
     theme.palette.primary.dark,
   ];
 
-  console.log(chartData)
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
@@ -88,7 +91,6 @@ function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
               max: 100000000000,
               min: 90000000000,
               valueFormatter: (value) => {
-                console.log(value, 'in tick formatter')
                 if (value >= 1000000000) {
                   return `${(value / 1000000000).toFixed(0)}B`; // Convert to thousands
                 }

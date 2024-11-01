@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
+
 import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 import MenuButton from './MenuButton';
-import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
+import ColorModeIconDropdown from '../../../shared-theme/ColorModeIconDropdown';
 import ConnectWallet from './ConnectWallet';
 
 import Search from './Search';
@@ -24,10 +25,10 @@ export default function Header() {
     >
       <NavbarBreadcrumbs />
       <Stack direction="row" sx={{ gap: 1 }}>
-        <Search />
-        <MenuButton showBadge aria-label="Open notifications">
+        {/*  <Search />*/}
+        {/*  <MenuButton showBadge aria-label="Open notifications">
           <NotificationsRoundedIcon />
-        </MenuButton>
+        </MenuButton>*/}
         <ColorModeIconDropdown />
         <ConnectWallet />
       </Stack>

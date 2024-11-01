@@ -10,19 +10,23 @@ import Typography from '@mui/material/Typography';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import { areaElementClasses } from '@mui/x-charts/LineChart';
 
-function getDaysInMonth(month, year) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString('en-US', {
-    month: 'short',
-  });
-  const daysInMonth = date.getDate();
+function getLast30Days() {
+  const today = new Date();
   const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
+
+  for (let i = 0; i < 30; i++) {
+    const pastDate = new Date(today);
+    pastDate.setDate(today.getDate() - i);
+
+    const dayString = pastDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+
+    days.push(dayString);
   }
-  return days;
+
+  return days.reverse(); // Reverse to show oldest date first
 }
 
 function AreaGradient({ color, id }) {
@@ -41,9 +45,9 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function StatCard({ title, value, interval, trend, data }) {
+function StatCard({ title, value, interval, trendValue, trend, data }) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
+  const daysInWeek = getLast30Days();
 
   const trendColors = {
     up:
@@ -68,7 +72,6 @@ function StatCard({ title, value, interval, trend, data }) {
 
   const color = labelColors[trend];
   const chartColor = trendColors[trend];
-  const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
 
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
@@ -88,7 +91,7 @@ function StatCard({ title, value, interval, trend, data }) {
               <Typography variant="h4" component="p">
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
+              {trendValue && <Chip size="small" color={color} label={trendValue} />}
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
