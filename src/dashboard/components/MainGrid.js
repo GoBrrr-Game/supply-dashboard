@@ -15,7 +15,7 @@ import InitialSupplyCard from './InitialSupplyCard';
 
 import { useQuery, gql } from '@apollo/client';
 
-import { formatNumberWithCommas } from '../../utils/number';
+import { formatNumberWithCommas, getCurrentDateFormatted } from '../../utils/number';
 
 // Define your GraphQL query
 const GET_TOKEN_DATA = gql`
@@ -62,7 +62,8 @@ export default function MainGrid() {
   const burnHistories = data?.burnHistories.map(data => parseFloat(formatEther(data.burnedAmount))).reverse();
   const burnHistoriesChartData = Array(30 - burnHistories.length).fill(0).concat(burnHistories);
 
-
+  const burnedTodayData = data?.burnHistories.find(history => history.id === getCurrentDateFormatted());
+  const burnedToday = burnedTodayData ? burnedTodayData.burnedAmount : '0';
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
@@ -96,7 +97,7 @@ export default function MainGrid() {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard {...{
             title: 'Burned Today',
-            value: formatNumberWithCommas(burnHistoriesChartData[burnHistoriesChartData.length - 1].toString()),
+            value: `${formatNumberWithCommas(parseFloat(formatEther(burnedToday)).toString())} $BRRR`,
             interval: 'Last 30 days',
             trendValue: null,
             trend: 'up',
