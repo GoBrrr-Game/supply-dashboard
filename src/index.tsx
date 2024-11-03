@@ -7,6 +7,12 @@ import reportWebVitals from './reportWebVitals';
 
 import client from './providers/apolloClient';
 import { ApolloProvider } from '@apollo/client';
+import { Buffer } from 'buffer';
+import 'stream-browserify';
+import 'crypto-browserify'; // Import crypto-browserify
+
+// Make Buffer available globally
+window.Buffer = Buffer;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

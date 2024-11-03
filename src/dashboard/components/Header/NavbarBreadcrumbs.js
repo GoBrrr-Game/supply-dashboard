@@ -22,7 +22,7 @@ export default function NavbarBreadcrumbs() {
       aria-label="breadcrumb"
       separator={<NavigateNextRoundedIcon fontSize="small" />}
     >
-      <img src={logo} alt='logo' style={{ width: '124px' }} />
+      <img src={logo} alt='logo' style={{ width: '48px' }} />
       <Typography variant="body1">Supply</Typography>
       <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 600 }}>
         Dashboard

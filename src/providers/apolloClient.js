@@ -2,7 +2,7 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 // Replace with your subgraph endpoint
 const client = new ApolloClient({
-    uri: 'https://api.studio.thegraph.com/query/93278/brrr-token/v0.0.10',
+    uri: process.env.REACT_APP_SUB_GRAPH_API,
     cache: new InMemoryCache(),
 });
 
