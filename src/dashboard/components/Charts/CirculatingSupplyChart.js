@@ -43,7 +43,7 @@ function getLast30Days() {
   return days.reverse(); // Reverse to show oldest date first
 }
 
-function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
+function CirculatingSupplyChart({ title, value, subValue, subValueType, chartData }) {
   const theme = useTheme();
   const data = getLast30Days();
 
@@ -137,8 +137,8 @@ function CustomizedChart({ title, value, subValue, subValueType, chartData }) {
   );
 }
 
-CustomizedChart.propTypes = {
+CirculatingSupplyChart.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-export default CustomizedChart;
+export default CirculatingSupplyChart;

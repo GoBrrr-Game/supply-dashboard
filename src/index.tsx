@@ -11,6 +11,8 @@ import { Buffer } from 'buffer';
 import 'stream-browserify';
 import 'crypto-browserify'; // Import crypto-browserify
 
+import { WalletProvider } from './providers/walletContext';
+
 // Make Buffer available globally
 window.Buffer = Buffer;
 
@@ -19,9 +21,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <Dashboard />
-    </ApolloProvider>
+    <WalletProvider>
+      <ApolloProvider client={client}>
+        <Dashboard />
+      </ApolloProvider>
+    </WalletProvider>
   </React.StrictMode>
 );
 

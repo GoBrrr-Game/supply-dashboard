@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Menu, MenuItem, Typography, Box } from '@mui/material';
 import { AccountBalanceWallet, ExpandMore } from '@mui/icons-material';
-import { connectWallet } from '../../../utils/walletConnect';
+import { useWallet } from '../../../providers/walletContext';
 
 export default function WalletConnect() {
+  const { walletAddress, setWalletAddress, handleConnectWallet, handleDisconnect } = useWallet();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [walletAddress, setWalletAddress] = useState(null);
-
-  // Function to retrieve wallet address from local storage
-  const loadWalletAddress = () => {
-    const storedAddress = localStorage.getItem('walletAddress');
-    if (storedAddress) {
-      setWalletAddress(storedAddress);
-    }
-  };
-
-  // Load wallet address from local storage on component mount
-  useEffect(() => {
-    loadWalletAddress();
-  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,21 +15,14 @@ export default function WalletConnect() {
     setAnchorEl(null);
   };
 
-  const handleConnectWallet = async (providerType) => {
-    try {
-      const provider = await connectWallet(providerType);
-      const signer = await provider.getSigner();
-      const userAddress = await signer.getAddress();
-      setWalletAddress(userAddress);
-      localStorage.setItem('walletAddress', userAddress);
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
-    }
+  const connectWalletAndUpdate = async (providerType) => {
+    await handleConnectWallet(providerType);
+    setWalletAddress(localStorage.getItem('walletAddress'));
   };
 
-  const handleDisconnect = () => {
+  const disconnectWalletAndUpdate = () => {
+    handleDisconnect();
     setWalletAddress(null);
-    localStorage.removeItem('walletAddress'); // Remove wallet address from local storage on disconnect
   };
 
   return (
@@ -50,21 +30,39 @@ export default function WalletConnect() {
       <Box>
         <Button
           variant="contained"
-          onClick={walletAddress ? handleDisconnect : handleClick}
+          onClick={walletAddress ? disconnectWalletAndUpdate : handleClick}
           endIcon={walletAddress ? null : <ExpandMore />}
           startIcon={<AccountBalanceWallet />}
+          sx={{
+            backgroundColor: walletAddress ? 'green' : 'primary.main',
+            color: '#fff',
+            '&:hover': {
+              backgroundColor: walletAddress ? 'darkgreen' : 'primary.dark',
+            },
+          }}
         >
           {walletAddress ? 'Disconnect' : 'Connect Wallet'}
         </Button>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={() => handleConnectWallet('metamask')}>MetaMask</MenuItem>
-          <MenuItem onClick={() => handleConnectWallet('walletconnect')}>WalletConnect</MenuItem>
-          <MenuItem onClick={() => handleConnectWallet('coinbase')}>Coinbase Wallet</MenuItem>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+          <MenuItem onClick={() => connectWalletAndUpdate('metamask')}>MetaMask</MenuItem>
+          <MenuItem onClick={() => connectWalletAndUpdate('walletconnect')}>WalletConnect</MenuItem>
+          <MenuItem onClick={() => connectWalletAndUpdate('coinbase')}>Coinbase Wallet</MenuItem>
         </Menu>
+        {walletAddress && (
+          <Typography
+            variant="body2"
+            sx={{
+              mt: 1,
+              color: 'green',
+              fontWeight: 'bold',
+              backgroundColor: '#f0f4f8',
+              borderRadius: 1,
+              padding: '4px 8px',
+            }}
+          >
+            Connected: {`${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
+          </Typography>
+        )}
       </Box>
     </div>
   );
