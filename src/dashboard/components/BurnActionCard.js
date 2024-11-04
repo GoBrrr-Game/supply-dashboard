@@ -48,15 +48,17 @@ export default function BurnActionCard() {
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent>
-        <WhatshotIcon />
-        <Typography
-          component="h2"
-          variant="subtitle2"
-          gutterBottom
-          sx={{ fontWeight: '600' }}
-        >
-          Join the Burn
-        </Typography>
+        <Box sx={{ display: 'flex', }}>
+          <WhatshotIcon color='error' />
+          <Typography
+            component="h2"
+            variant="subtitle2"
+            gutterBottom
+            sx={{ fontWeight: '600', marginTop: '5px' }}
+          >
+            Join the Burn
+          </Typography>
+        </Box>
         <Typography sx={{ color: 'text.secondary', mb: '8px' }}>
           Take $BRRR out of circulation forever. Every token we burn makes the rest that much more rare.
         </Typography>
