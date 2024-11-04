@@ -52,7 +52,7 @@ function BalanceHistoryChart({ title, value, subValue, subValueType, chartData }
         theme.palette.primary.main,
         theme.palette.primary.dark,
     ];
-    console.log(chartData)
+
     return (
         <Card variant="outlined" sx={{ width: '100%' }}>
             <CardContent>

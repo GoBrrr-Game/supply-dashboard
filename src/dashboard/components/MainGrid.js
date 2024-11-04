@@ -10,7 +10,7 @@ import Copyright from '../internals/components/Copyright';
 import TokenBurn from './TokenBurn';
 import Holders from './Holders';
 
-import HighlightedCard from './HighlightedCard';
+import BurnActionCard from './BurnActionCard';
 import CirculatingSupplyChart from './Charts/CirculatingSupplyChart';
 import BalanceHistoryChart from './Charts/BalanceHistoryChart';
 import StatCard from './StatCard';
@@ -51,8 +51,8 @@ const GET_TOKEN_DATA = gql`
 
 export default function MainGrid() {
   const { loading, error, data } = useQuery(GET_TOKEN_DATA);
-  //  const { walletAddress } = useWallet();
-  const walletAddress = '0x873e6e61b5abbd00dd92e4cd59a4920421c0a863';
+  const { walletAddress } = useWallet();
+  //const walletAddress = '0x873e6e61b5abbd00dd92e4cd59a4920421c0a863';
   const [userTokenHistoryData, setUserTokenHistoryData] = useState(null);
 
   useEffect(() => {
@@ -102,6 +102,10 @@ export default function MainGrid() {
 
     userTokenHistoryChartData = Object.values(balanceData).map(value => Number(value)).reverse();;
   }
+  const userTokenHistoryIncreasePercent = userTokenHistoryChartData[0] === 0
+    ? (userTokenHistoryChartData[userTokenHistoryChartData.length - 1] === 0 ? 0 : 100)
+    : (((userTokenHistoryChartData[userTokenHistoryChartData.length - 1] - userTokenHistoryChartData[0]) / userTokenHistoryChartData[0]) * 100).toFixed(2);
+
 
   if (loading) return <div>Loading...</div>
 
@@ -221,7 +225,7 @@ export default function MainGrid() {
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
+          <BurnActionCard />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <CirculatingSupplyChart
@@ -235,6 +239,8 @@ export default function MainGrid() {
           {walletAddress &&
             <BalanceHistoryChart title='Your Balance'
               value={`${formatNumberWithCommas(parseFloat(userTokenHistoryChartData[userTokenHistoryChartData.length - 1]).toFixed(2).toString())} $BRRR`}
+              subValue={`${userTokenHistoryIncreasePercent} %`}
+              subValueType={userTokenHistoryIncreasePercent < 0 ? 'error' : 'success'}
               chartData={userTokenHistoryChartData} />}
         </Grid>
       </Grid>
