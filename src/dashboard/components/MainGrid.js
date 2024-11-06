@@ -236,7 +236,7 @@ export default function MainGrid() {
             chartData={circulatingSuppliesChartData} />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          {walletAddress &&
+          {(walletAddress && userTokenHistoryChartData.length > 0) &&
             <BalanceHistoryChart title='Your Balance'
               value={`${formatNumberWithCommas(parseFloat(userTokenHistoryChartData[userTokenHistoryChartData.length - 1]).toFixed(2).toString())} $BRRR`}
               subValue={`${userTokenHistoryIncreasePercent} %`}
