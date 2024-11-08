@@ -89,7 +89,7 @@ function StatCard({ title, value, interval, trendValue, trend, data }) {
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
               <Typography variant="h4" component="p">
-                {value}
+                {value === 'true' ? 'Calculating ...' : value}
               </Typography>
               {trendValue && <Chip size="small" color={color} label={trendValue} />}
             </Stack>

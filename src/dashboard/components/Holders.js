@@ -7,7 +7,7 @@ import { formatNumberWithCommas } from '../../utils/number';
 
 const GET_TOKEN_HOLDERS = gql`
   query {
-    tokenHolders( orderBy: balance, orderDirection: desc){
+    tokenHolders( orderBy: balance, orderDirection: desc, where: { balance_gt: "0" }){
         id
         balance
     }

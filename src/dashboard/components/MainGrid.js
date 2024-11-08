@@ -16,13 +16,21 @@ import BalanceHistoryChart from './Charts/BalanceHistoryChart';
 import StatCard from './StatCard';
 import InitialSupplyCard from './InitialSupplyCard';
 
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, useApolloClient } from '@apollo/client';
 
 import { useWallet } from '../../providers/walletContext';
 import { formatNumberWithCommas, getCurrentDateFormatted } from '../../utils/number';
 import { fetchTokenHoldHistory } from '../../utils/chainData';
 
 // Define your GraphQL query
+const GET_TOKEN_HOLDERS = gql`
+  query getTokenHolders($skip: Int, $first: Int) {
+    tokenHolders(skip: $skip, first: $first, where: { balance_gt: "0" }) {
+      id
+    }
+  }
+`;
+
 const GET_TOKEN_DATA = gql`
   query {
     burnHistories(first: 30, orderBy: date, orderDirection: desc){
@@ -51,9 +59,11 @@ const GET_TOKEN_DATA = gql`
 
 export default function MainGrid() {
   const { loading, error, data } = useQuery(GET_TOKEN_DATA);
+
   const { walletAddress } = useWallet();
-  //const walletAddress = '0x873e6e61b5abbd00dd92e4cd59a4920421c0a863';
   const [userTokenHistoryData, setUserTokenHistoryData] = useState(null);
+
+
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -67,6 +77,52 @@ export default function MainGrid() {
 
     loadUserData();
   }, [walletAddress]);
+
+
+  //Get Token Holder Count
+  const client = useApolloClient();
+  const pageSize = 100;
+  const [isLoadingHolderCount, setIsLoadingHolderCount] = useState(false);
+  const [totalHoldersCount, setTotalHoldersCount] = useState(0);
+
+  const fetchTokenHolderCount = async () => {
+    let skip = 0;
+    let hasMore = true;
+    let count = 0;
+
+    try {
+      setTotalHoldersCount(true);
+      while (hasMore) {
+        const { data } = await client.query({
+          query: GET_TOKEN_HOLDERS,
+          variables: { skip, first: pageSize },
+        });
+
+        if (data && data.tokenHolders) {
+          count += data.tokenHolders.length;
+
+          if (data.tokenHolders.length < pageSize) {
+            hasMore = false;
+          } else {
+            skip += pageSize;
+          }
+        } else {
+          hasMore = false;
+        }
+      }
+
+      setTotalHoldersCount(count);
+    } catch (err) {
+    } finally {
+      setIsLoadingHolderCount(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTokenHolderCount();
+  }, []);
+
+  if (loading) return <div>Loading...</div>
 
   let userTokenHistoryChartData = [];
   if (userTokenHistoryData) {
@@ -106,8 +162,6 @@ export default function MainGrid() {
     ? (userTokenHistoryChartData[userTokenHistoryChartData.length - 1] === 0 ? 0 : 100)
     : (((userTokenHistoryChartData[userTokenHistoryChartData.length - 1] - userTokenHistoryChartData[0]) / userTokenHistoryChartData[0]) * 100).toFixed(2);
 
-
-  if (loading) return <div>Loading...</div>
 
   const last30Days = Array.from({ length: 30 }, (_, index) =>
     dayjs().subtract(index, 'day').format('YYYY-MM-DD')
@@ -184,6 +238,8 @@ export default function MainGrid() {
   const burnedTodayData = data?.burnHistories.find(history => history.id === getCurrentDateFormatted());
   const burnedToday = burnedTodayData ? burnedTodayData.burnedAmount : '0';
 
+
+
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       {/* cards */}
@@ -206,7 +262,7 @@ export default function MainGrid() {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard {...{
             title: 'Holders',
-            value: parseInt(data?.tokenStats[0]?.totalHolderCount),
+            value: isLoadingHolderCount ? 'Calculating...' : totalHoldersCount.toString(),
             interval: 'Last 30 days',
             trendValue: `${holderCountIncreasePercent} %`,
             trend: 'up',
