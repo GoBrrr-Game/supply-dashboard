@@ -37,7 +37,7 @@ const columns = [
     minWidth: 300,
     renderCell: (params) =>
       <div>
-        <a href={`https://etherscan.io/tx/${params.value}`}>{params.value.slice(0, 30)}...</a>
+        <a href={`https://etherscan.io/tx/${params.value.split('-')[0]}`}>{params.value.slice(0, 30)}...</a>
       </div>,
   },
   {
